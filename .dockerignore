@@ -1,0 +1,51 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+venv/
+env/
+.env
+.venv
+
+# DVC
+.dvc/tmp/
+.dvc/cache/
+
+# MLflow
+mlruns/
+
+# ZenML
+.zen/
+zenml.log
+
+# Data
+data/processed/
+data/raw/
+
+# Models
+models/
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md

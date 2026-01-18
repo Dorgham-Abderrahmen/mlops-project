@@ -1,0 +1,85 @@
+﻿version: '3.8'
+
+services:
+  # Service MLflow
+  mlflow:
+    image: python:3.9-slim
+    container_name: mlflow-tracking
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+      - .:/app
+    working_dir: /app
+    command: >
+      bash -c "pip install mlflow &&
+               mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlruns/mlflow.db --default-artifact-root /mlruns"
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    networks:
+      - mlops-network
+
+  # Service API (votre API existante)
+  ml-api:
+    build: .
+    container_name: iris-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./model:/app/model
+      - ./logs:/app/logs
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MODEL_PATH=/app/model/iris_model.pkl
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Service ZenML (optionnel)
+  zenml:
+    image: python:3.9-slim
+    container_name: zenml-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./zenml_store:/zenml_store
+      - .:/app
+    working_dir: /app
+    command: >
+      bash -c "pip install zenml[server] &&
+               zenml up --host 0.0.0.0 --port 8080"
+    environment:
+      - ZENML_STORE_PATH=/zenml_store
+    networks:
+      - mlops-network
+
+  # Service pour l'entraînement (à la demande)
+  trainer:
+    image: python:3.9-slim
+    container_name: ml-trainer
+    volumes:
+      - .:/app
+      - ./model:/app/model
+      - ./mlruns:/mlruns
+    working_dir: /app
+    command: >
+      bash -c "pip install -r requirements.txt &&
+               python train_mlflow.py"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-network
+    profiles:
+      - train
+
+networks:
+  mlops-network:
+    driver: bridge
