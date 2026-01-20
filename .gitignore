@@ -37,7 +37,8 @@ ENV/
 Thumbs.db
 
 # Données et modèles
-data/
+data/*.csv
+!data/*.dvc
 model/
 mlruns/
 zenml_store/
