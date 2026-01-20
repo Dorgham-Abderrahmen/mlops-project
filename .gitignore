@@ -1,4 +1,6 @@
-﻿# Python
+﻿# -------------------------
+# Python
+# -------------------------
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,36 +22,52 @@ wheels/
 .installed.cfg
 *.egg
 
+# -------------------------
 # Virtual Environment
+# -------------------------
 venv/
 env/
 .venv/
 ENV/
 
+# -------------------------
 # IDE
+# -------------------------
 .vscode/
 .idea/
 *.swp
 *.swo
 
+# -------------------------
 # OS
+# -------------------------
 .DS_Store
 Thumbs.db
 
+# -------------------------
 # Données et modèles
+# -------------------------
+# Ignorer les fichiers bruts mais suivre les fichiers DVC
 data/*.csv
 !data/*.dvc
-model/
+
+# Ignorer les modèles binaires mais suivre les fichiers DVC
+model/*.pkl
+!model/*.dvc
+
+# MLflow & ZenML
 mlruns/
 zenml_store/
-*.pkl
-*.joblib
+mlflow.db
 
+# -------------------------
 # Logs
+# -------------------------
 logs/
 *.log
 
+# -------------------------
 # DVC
+# -------------------------
 .dvc/tmp/
 .dvc/cache/
-mlflow.db
